@@ -38,6 +38,8 @@ class _MyHomePageState extends State<MyHomePage> {
   bool partieEnCours = true;
   String texte = "test";
   Echec _partie = Echec();
+  bool afficheCoupPossible = false;
+  List<int> pieceEnMouvement = [0, 0];
 
   Image affichePrise(int index, String couleur) {
     PieceEchec laPiece;
@@ -50,24 +52,65 @@ class _MyHomePageState extends State<MyHomePage> {
         image: AssetImage(Affichage.donneLien(laPiece)), height: 20, width: 20);
   }
 
-  Draggable? buildPiece(int x, int y) {
+  Container? buildCoupPossible(x, y) {
+    Container? coupPossible = null;
+    if (_partie.peutJouer(pieceEnMouvement[0], pieceEnMouvement[1], x, y) &&
+        afficheCoupPossible) {
+      coupPossible = Container(
+        height: 36,
+        width: 36,
+        color: Colors.green,
+      );
+    }
+    return coupPossible;
+  }
+
+  Widget? buildPiece(int x, int y) {
+    Color? couleur = null;
     PieceEchec? laPiece =
         this._partie.getPlateau().getPlateau()[y][x].getPiece();
     Case laCase = this._partie.getPlateau().getPlateau()[y][x];
-    Draggable? piece = null;
+    Widget? piece = null;
     if (laPiece != null) {
-      piece = Draggable<Case>(
-        data: laCase,
-        child: Image(
+      if (_partie.verifieCouleurCase(_partie.getJoueur(), x, y)) {
+        piece = Draggable<Case>(
+          data: laCase,
+          child: Image(
             image: AssetImage(Affichage.donneLien(laPiece)),
             height: 43,
-            width: 43),
-        feedback: Image(
+            width: 43,
+          ),
+          feedback: Image(
             image: AssetImage(Affichage.donneLien(laPiece)),
             height: 43,
-            width: 43),
-        childWhenDragging: Container(),
-      );
+            width: 43,
+          ),
+          onDragEnd: (details) {
+            setState(() {
+              afficheCoupPossible = false;
+            });
+          },
+          onDragStarted: () {
+            setState(() {
+              afficheCoupPossible = true;
+              pieceEnMouvement[0] = x;
+              pieceEnMouvement[1] = y;
+            });
+          },
+          childWhenDragging: Container(),
+        );
+      } else {
+        piece = Container(
+            alignment: Alignment.center,
+            foregroundDecoration: BoxDecoration(
+                image: DecorationImage(
+                    alignment: Alignment.center,
+                    image: AssetImage(Affichage.donneLien(laPiece)))),
+            child: buildCoupPossible(x, y));
+      }
+    } else {
+      piece = Container(
+          alignment: Alignment.center, child: buildCoupPossible(x, y));
     }
     return piece;
   }
@@ -110,7 +153,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   DragTarget buildContainer(int x, int y) {
-    Widget? cavalier = null;
     Color couleur = Color.fromARGB(255, 254, 206, 158);
     if ((x + y) % 2 == 1) {
       couleur = Color.fromARGB(255, 209, 139, 70);
@@ -118,7 +160,11 @@ class _MyHomePageState extends State<MyHomePage> {
     return DragTarget<Case>(
       builder: (context, data, rejectedData) {
         return Container(
-            color: couleur, height: 43, width: 43, child: buildPiece(x, y));
+            color: couleur,
+            height: 43,
+            width: 43,
+            alignment: Alignment.center,
+            child: buildPiece(x, y));
       },
       onWillAccept: (data) {
         bool verif = true;
@@ -217,6 +263,16 @@ class _MyHomePageState extends State<MyHomePage> {
             ...List.generate(
                 _partie.getPriseBlanc().length, (x) => affichePrise(x, "blanc"))
           ]),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                Affichage.afficheTour(_partie),
+                style:
+                    TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+              )
+            ],
+          ),
         ]),
       ),
     );
