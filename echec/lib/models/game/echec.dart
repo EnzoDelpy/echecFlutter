@@ -1,10 +1,6 @@
-import 'dart:developer';
-
-import 'package:echec/dame.dart';
-import 'package:echec/fou.dart';
-import 'package:echec/pion.dart';
-import 'package:echec/tour.dart';
-import 'package:collection/collection.dart';
+import 'package:echec/models/game/dame.dart';
+import 'package:echec/models/game/pion.dart';
+import 'package:echec/models/game/tour.dart';
 import 'case.dart';
 import 'piece_echec.dart';
 import 'plateau.dart';

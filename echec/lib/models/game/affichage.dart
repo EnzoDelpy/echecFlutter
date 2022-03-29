@@ -1,5 +1,4 @@
-import 'package:echec/piece_echec.dart';
-
+import 'package:echec/models/game/piece_echec.dart';
 import 'echec.dart';
 
 class Affichage {

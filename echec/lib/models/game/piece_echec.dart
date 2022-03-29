@@ -1,9 +1,9 @@
-import 'package:echec/cavalier.dart';
-import 'package:echec/dame.dart';
-import 'package:echec/fou.dart';
-import 'package:echec/pion.dart';
-import 'package:echec/roi.dart';
-import 'package:echec/tour.dart';
+import 'package:echec/models/game/cavalier.dart';
+import 'package:echec/models/game/dame.dart';
+import 'package:echec/models/game/fou.dart';
+import 'package:echec/models/game/pion.dart';
+import 'package:echec/models/game/roi.dart';
+import 'package:echec/models/game/tour.dart';
 
 import 'plateau.dart';
 
